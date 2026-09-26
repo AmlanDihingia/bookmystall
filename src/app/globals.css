@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --red: #B3122A;
+    --red-deep: #7A0C1E;
+    --gold: #F2A900;
+    --ink: #2A1320;
+    --muted: #6B5560;
+    --shell: #FFFBF4;
+    --panel: #FFFFFF;
+    --line: #EADDD3;
+    --tint: #FCEBEE;
+    --gold-tint: #FFF3D6;
+    --teal: #159A92;
+    --orange: #EE6B1F;
+    --green: #4E9A2F;
+    --pink: #E0306A;
+    --purple: #7B3FA0;
+  }
+}
+
+body {
+  font-family: var(--font-mukta), system-ui, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: var(--font-poppins), system-ui, sans-serif;
+}
+
+.bunting-pattern {
+  height: 28px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='28'%3E%3Cline x1='0' y1='2' x2='256' y2='2' stroke='%23F7D98A' stroke-width='1.5'/%3E%3Cpath d='M4 2h24L16 26z' fill='%23F2A900'/%3E%3Cpath d='M36 2h24L48 26z' fill='%23159A92'/%3E%3Cpath d='M68 2h24L80 26z' fill='%23E0306A'/%3E%3Cpath d='M100 2h24l-12 24z' fill='%23EE6B1F'/%3E%3Cpath d='M132 2h24l-12 24z' fill='%231D4F9C'/%3E%3Cpath d='M164 2h24l-12 24z' fill='%234E9A2F'/%3E%3Cpath d='M196 2h24l-12 24z' fill='%237B3FA0'/%3E%3Cpath d='M228 2h24l-12 24z' fill='%23F2A900'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+}
