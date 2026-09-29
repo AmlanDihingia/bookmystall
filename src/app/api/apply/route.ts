@@ -44,25 +44,34 @@ export async function POST(request: Request) {
       status: 'pending'
     }
 
-    // Insert into Supabase if configured
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     let supabaseResult = null
 
-    if (supabaseUrl && !supabaseUrl.includes('placeholder.supabase.co')) {
-      const supabase = createClient()
-      const { data, error } = await supabase
-        .from('applications')
-        .insert([payload])
-        .select()
-
-      if (error) {
-        console.error('Supabase Error:', error)
-      } else {
-        supabaseResult = data
-      }
+    if (!supabaseUrl || supabaseUrl.includes('placeholder.supabase.co')) {
+      console.error('Supabase configuration error: NEXT_PUBLIC_SUPABASE_URL is missing or using placeholder.')
+      return NextResponse.json(
+        { error: 'Server configuration error: Supabase environment variables are missing on the host.' },
+        { status: 500 }
+      )
     }
 
-    // Google Apps Script endpoint fallback if configured
+    const supabase = createClient()
+    const { data, error } = await supabase
+      .from('applications')
+      .insert([payload])
+      .select()
+
+    if (error) {
+      console.error('Supabase Insert Error:', error)
+      return NextResponse.json(
+        { error: `Database error: ${error.message}` },
+        { status: 500 }
+      )
+    }
+
+    supabaseResult = data
+
+    // Optional Google Apps Script endpoint fallback if configured
     const sheetEndpoint = process.env.NEXT_PUBLIC_SHEET_ENDPOINT
     if (sheetEndpoint && sheetEndpoint.startsWith('https://')) {
       try {
