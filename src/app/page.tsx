@@ -130,7 +130,9 @@ export default function Home() {
             <div className="bg-white border border-[#EADDD3] rounded-2xl p-6 shadow-sm flex flex-col justify-between">
               <div>
                 <div className="text-sm font-semibold text-[#B3122A]">Standard</div>
-                <div className="font-heading font-bold text-3xl text-[#2A1320] my-2">₹30,000</div>
+                <div className="font-heading font-bold text-3xl text-[#2A1320] my-2">
+                  ₹21,000 <span className="text-xl text-[#9A8C93] line-through ml-1">₹30,000</span>
+                </div>
               </div>
               <div className="text-sm text-[#6B5560]">16 stalls · fixed price</div>
             </div>
@@ -138,7 +140,9 @@ export default function Home() {
             <div className="bg-white border border-[#EADDD3] rounded-2xl p-6 shadow-sm flex flex-col justify-between">
               <div>
                 <div className="text-sm font-semibold text-[#B3122A]">Prime aisle</div>
-                <div className="font-heading font-bold text-3xl text-[#2A1320] my-2">₹50,000</div>
+                <div className="font-heading font-bold text-3xl text-[#2A1320] my-2">
+                  ₹42,000 <span className="text-xl text-[#9A8C93] line-through ml-1">₹50,000</span>
+                </div>
               </div>
               <div className="text-sm text-[#6B5560]">8 stalls · fixed price</div>
             </div>
@@ -146,7 +150,9 @@ export default function Home() {
             <div className="bg-white border border-[#EADDD3] rounded-2xl p-6 shadow-sm flex flex-col justify-between">
               <div>
                 <div className="text-sm font-semibold text-[#B3122A]">Premium corner</div>
-                <div className="font-heading font-bold text-3xl text-[#2A1320] my-2">₹75,000</div>
+                <div className="font-heading font-bold text-3xl text-[#2A1320] my-2">
+                  ₹63,000 <span className="text-xl text-[#9A8C93] line-through ml-1">₹75,000</span>
+                </div>
               </div>
               <div className="text-sm text-[#6B5560]">4 stalls · from</div>
             </div>
@@ -154,9 +160,11 @@ export default function Home() {
             <div className="bg-[#B3122A] text-white border border-[#B3122A] rounded-2xl p-6 shadow-md flex flex-col justify-between">
               <div>
                 <div className="text-sm font-semibold text-[#F2A900]">Rajbari</div>
-                <div className="font-heading font-bold text-3xl text-white my-2">₹1,00,000</div>
+                <div className="font-heading font-bold text-3xl text-white my-2">
+                  ₹70,000 <span className="text-xl text-[#FFD9C9] opacity-70 line-through ml-1">₹1,00,000</span>
+                </div>
               </div>
-              <div className="text-sm text-[#FFD9C9]">2 seated spaces · from</div>
+              <div className="text-sm text-[#FFD9C9]">First Few Slots Only</div>
             </div>
           </div>
 
