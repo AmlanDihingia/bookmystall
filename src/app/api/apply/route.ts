@@ -1,77 +1,80 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase'
+import { saveLocalApplication } from '@/lib/storage'
 
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    
-    // Server-side validation
-    const requiredFields = [
-      'brand_name',
-      'contact_name',
-      'whatsapp_number',
-      'kitchen_type',
-      'category',
-      'hero_dishes',
-      'stall_tier',
-      'daily_capacity',
-      'fssai_status'
-    ]
 
-    for (const field of requiredFields) {
-      if (!body[field] || typeof body[field] !== 'string' || !body[field].trim()) {
-        return NextResponse.json(
-          { error: `Missing or invalid required field: ${field}` },
-          { status: 400 }
-        )
-      }
+    // Minimum required fields
+    const brandName = (body.brand_name || body.brand || '').trim()
+    const contactName = (body.contact_name || body.contact || '').trim()
+    const rawPhone = (body.whatsapp_number || body.phone || '').toString()
+    const phoneDigits = rawPhone.replace(/\D/g, '').slice(-10)
+
+    if (!brandName) {
+      return NextResponse.json(
+        { error: 'Missing required field: brand_name' },
+        { status: 400 }
+      )
+    }
+
+    if (!contactName) {
+      return NextResponse.json(
+        { error: 'Missing required field: contact_name' },
+        { status: 400 }
+      )
+    }
+
+    if (phoneDigits.length < 10) {
+      return NextResponse.json(
+        { error: 'Valid 10-digit whatsapp_number is required' },
+        { status: 400 }
+      )
     }
 
     const payload = {
-      brand_name: body.brand_name.trim(),
-      contact_name: body.contact_name.trim(),
-      whatsapp_number: body.whatsapp_number.replace(/\D/g, '').slice(-10),
-      instagram_handle: body.instagram_handle?.trim() || null,
-      kitchen_type: body.kitchen_type.trim(),
-      category: body.category.trim(),
-      hero_dishes: body.hero_dishes.trim(),
-      stall_tier: body.stall_tier.trim(),
-      daily_capacity: body.daily_capacity.trim(),
-      fssai_status: body.fssai_status.trim(),
-      location_area: body.location_area?.trim() || null,
-      additional_notes: body.additional_notes?.trim() || null,
-      source: body.source?.trim() || 'direct',
-      status: 'pending'
+      brand_name: brandName,
+      contact_name: contactName,
+      whatsapp_number: phoneDigits,
+      instagram_handle: (body.instagram_handle || body.instagram || '').trim() || null,
+      kitchen_type: (body.kitchen_type || body.type || 'Vendor / Retail').trim(),
+      category: (body.category || 'General Space Enquiry').trim(),
+      hero_dishes: (body.hero_dishes || body.dishes || 'Space & Stall Enquiry').trim(),
+      stall_tier: (body.stall_tier || body.tier || 'Standard').trim(),
+      daily_capacity: (body.daily_capacity || body.capacity || 'Standard').trim(),
+      fssai_status: (body.fssai_status || body.fssai || 'N/A').trim(),
+      location_area: (body.location_area || body.area || '').trim() || null,
+      additional_notes: (body.additional_notes || body.notes || '').trim() || null,
+      source: (body.source || 'direct').trim(),
+      status: 'pending' as const,
     }
 
+    // 1. Always save locally first (ensures zero data loss)
+    const savedLocal = await saveLocalApplication(payload)
+
+    // 2. Attempt Supabase insert if URL is configured
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    let supabaseResult = null
+    let supabaseSaved = false
 
-    if (!supabaseUrl || supabaseUrl.includes('placeholder.supabase.co')) {
-      console.error('Supabase configuration error: NEXT_PUBLIC_SUPABASE_URL is missing or using placeholder.')
-      return NextResponse.json(
-        { error: 'Server configuration error: Supabase environment variables are missing on the host.' },
-        { status: 500 }
-      )
+    if (supabaseUrl && !supabaseUrl.includes('placeholder.supabase.co')) {
+      try {
+        const supabase = createClient()
+        const { error } = await supabase
+          .from('applications')
+          .insert([payload])
+
+        if (!error) {
+          supabaseSaved = true
+        } else {
+          console.warn('Supabase DB Insert Warning:', error.message)
+        }
+      } catch (sbErr: any) {
+        console.warn('Supabase Connection Notice:', sbErr?.message || sbErr)
+      }
     }
 
-    const supabase = createClient()
-    const { data, error } = await supabase
-      .from('applications')
-      .insert([payload])
-      .select()
-
-    if (error) {
-      console.error('Supabase Insert Error:', error)
-      return NextResponse.json(
-        { error: `Database error: ${error.message}` },
-        { status: 500 }
-      )
-    }
-
-    supabaseResult = data
-
-    // Optional Google Apps Script endpoint fallback if configured
+    // 3. Optional Google Apps Script / Webhook endpoint fallback
     const sheetEndpoint = process.env.NEXT_PUBLIC_SHEET_ENDPOINT
     if (sheetEndpoint && sheetEndpoint.startsWith('https://')) {
       try {
@@ -81,17 +84,21 @@ export async function POST(request: Request) {
           body: JSON.stringify(payload),
         })
       } catch (sheetErr) {
-        console.error('Sheet Endpoint Error:', sheetErr)
+        console.warn('Sheet Endpoint Notice:', sheetErr)
       }
     }
 
     return NextResponse.json({
       success: true,
-      message: 'Application submitted successfully',
-      data: supabaseResult ? supabaseResult[0] : payload
+      message: 'Application submitted and saved successfully',
+      stored: {
+        local: true,
+        supabase: supabaseSaved,
+      },
+      data: savedLocal,
     })
   } catch (err: any) {
-    console.error('API Error:', err)
+    console.error('API /api/apply Error:', err)
     return NextResponse.json(
       { error: err?.message || 'Internal server error' },
       { status: 500 }

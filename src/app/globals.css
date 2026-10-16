@@ -1,35 +1,127 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Baloo+2:wght@600;800&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=DM+Serif+Display:ital@0;1&display=swap');
 @import "tailwindcss";
 
 @layer base {
   :root {
-    --red: #B3122A;
-    --red-deep: #7A0C1E;
-    --gold: #F2A900;
-    --ink: #2A1320;
-    --muted: #6B5560;
-    --shell: #FFFBF4;
-    --panel: #FFFFFF;
-    --line: #EADDD3;
-    --tint: #FCEBEE;
-    --gold-tint: #FFF3D6;
-    --teal: #159A92;
-    --orange: #EE6B1F;
-    --green: #4E9A2F;
-    --pink: #E0306A;
-    --purple: #7B3FA0;
+    --font-bricolage: 'Bricolage Grotesque', sans-serif;
+    --font-anton: 'Anton', sans-serif;
+    --font-baloo: 'Baloo 2', sans-serif;
+    --font-dm-serif: 'DM Serif Display', serif;
   }
 }
 
 body {
-  font-family: var(--font-mukta), system-ui, sans-serif;
+  margin: 0;
+  background: #141210;
+  color: #111;
+  font-family: var(--font-bricolage);
 }
 
-h1, h2, h3, h4, h5, h6, .font-heading {
-  font-family: var(--font-poppins), system-ui, sans-serif;
+a {
+  color: inherit;
+  transition: opacity 0.15s ease;
 }
 
-.bunting-pattern {
-  height: 28px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='28'%3E%3Cline x1='0' y1='2' x2='256' y2='2' stroke='%23F7D98A' stroke-width='1.5'/%3E%3Cpath d='M4 2h24L16 26z' fill='%23F2A900'/%3E%3Cpath d='M36 2h24L48 26z' fill='%23159A92'/%3E%3Cpath d='M68 2h24L80 26z' fill='%23E0306A'/%3E%3Cpath d='M100 2h24l-12 24z' fill='%23EE6B1F'/%3E%3Cpath d='M132 2h24l-12 24z' fill='%231D4F9C'/%3E%3Cpath d='M164 2h24l-12 24z' fill='%234E9A2F'/%3E%3Cpath d='M196 2h24l-12 24z' fill='%237B3FA0'/%3E%3Cpath d='M228 2h24l-12 24z' fill='%23F2A900'/%3E%3C/svg%3E");
-  background-repeat: repeat-x;
+a:hover {
+  opacity: 0.85;
+}
+
+/* Header Tab Buttons */
+.tab {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.15;
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 18px;
+  min-height: 44px;
+  cursor: pointer;
+  background: transparent;
+  color: #d8d2c8;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.tab small {
+  font-weight: 400;
+  font-size: 12px;
+  opacity: 0.8;
+  margin-top: 2px;
+}
+
+.tab:hover {
+  background: #2a2622;
+  color: #fff;
+}
+
+.tab.on-lgf {
+  background: #F2B705;
+  color: #3a0d14;
+}
+
+.tab.on-dd {
+  background: #FFD400;
+  color: #111;
+}
+
+.tab.on-bwc {
+  background: #F5C46B;
+  color: #2A1612;
+}
+
+/* Winter Carnival Textures */
+.bwc-snow {
+  background-color: #2A1612;
+  background-image:
+    radial-gradient(circle, rgba(247, 235, 221, 0.16) 1.5px, transparent 2px),
+    radial-gradient(circle, rgba(247, 235, 221, 0.09) 1px, transparent 1.5px);
+  background-size: 46px 46px, 23px 23px;
+  background-position: 0 0, 11px 17px;
+}
+
+.bwc-knit {
+  height: 14px;
+  background-image: repeating-linear-gradient(
+    135deg,
+    #9E2A2B 0 10px,
+    #F7EBDD 10px 20px,
+    #2F5240 20px 30px,
+    #F7EBDD 30px 40px
+  );
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.28s ease-out forwards;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.9;
+    filter: drop-shadow(0 0 4px rgba(245, 196, 107, 0.6));
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 10px rgba(245, 196, 107, 0.95));
+  }
+}
+
+.glow-bulb {
+  animation: pulseGlow 3s infinite ease-in-out;
 }
